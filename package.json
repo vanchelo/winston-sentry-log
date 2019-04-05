@@ -1,12 +1,12 @@
 {
-  "name": "winston-sentry-log",
-  "version": "1.0.11",
+  "name": "@vanchelo/winston-sentry-log",
+  "version": "1.0.1",
   "description": "Winston transport for @Sentry/node",
   "main": "dist/index.js",
   "author": "Francisco Sales",
   "repository": {
     "type": "git",
-    "url": "https://github.com/franciscofsales/winston-sentry-log"
+    "url": "https://github.com/vanchelo/winston-sentry-log"
   },
   "license": "MIT",
   "keywords": [
@@ -27,7 +27,7 @@
     "node": ">= 6.4.0"
   },
   "dependencies": {
-    "@sentry/node": "^4.6.4",
+    "@sentry/node": "^5.0.5",
     "lodash": "^4.17.11",
     "winston-transport": "^4.3.0"
   },
