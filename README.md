@@ -12,7 +12,7 @@
 ## Install
 
 ```bash
-yarn add winston winston-sentry-log
+yarn add winston @vanchelo/winston-sentry-log
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ With `new winston.Logger`:
 
 ```js
 import winston from 'winston';
-import Sentry from 'winston-sentry-log';
+import Sentry from '@vanchelo/winston-sentry-log';
 
 const options = {
   dsn: "https://******@sentry.io/12345",
@@ -39,7 +39,7 @@ Or with winston's `add` method:
 
 ```js
 import winston from 'winston';
-import Sentry from 'winston-sentry-log';
+import Sentry from '@vanchelo/winston-sentry-log';
 
 const logger = new winston.createLogger();
 
