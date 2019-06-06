@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@sentry/node": "^5.0.5",
+    "@sentry/utils": "^5.4.0",
     "lodash": "^4.17.11",
     "winston-transport": "^4.3.0"
   },
@@ -36,7 +37,7 @@
     "@types/node": "^11.9.6",
     "ts-node": "^8.0.2",
     "tsc-watch": "^2.1.2",
-    "tslint": "^5.13.0",
+    "tslint": "^5.17.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.3.3333",
