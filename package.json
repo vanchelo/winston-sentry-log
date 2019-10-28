@@ -27,9 +27,9 @@
     "node": ">= 6.4.0"
   },
   "dependencies": {
-    "@sentry/node": "^5.0.5",
+    "@sentry/node": "^5.7.1",
     "@sentry/utils": "^5.4.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "winston-transport": "^4.3.0"
   },
   "devDependencies": {
