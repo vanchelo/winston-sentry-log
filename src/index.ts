@@ -1,8 +1,12 @@
 import sentry from '@sentry/node';
-import { isError } from '@sentry/utils';
-import _ from 'lodash';
+import defaults from 'lodash/defaults';
+import defaultsDeep from 'lodash/defaultsDeep';
+import get from 'lodash/get';
+import has from 'lodash/has';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 import TransportStream = require('winston-transport');
-
+import { isError } from './is-error';
 import { Context } from './types';
 
 const errorHandler = (err: any) => {
@@ -12,17 +16,18 @@ const errorHandler = (err: any) => {
 
 export default class Sentry extends TransportStream {
   protected name: string;
-  protected tags: {[s: string]: any};
+  protected tags: { [s: string]: any };
   protected sentryClient: typeof sentry;
   protected levelsMap: any;
 
   constructor(opts: any) {
     super(opts);
+
     this.name = 'winston-sentry-log';
     this.tags = {};
     const options = opts;
 
-    _.defaultsDeep(opts, {
+    defaultsDeep(opts, {
       errorHandler,
       config: {
         dsn: process.env.SENTRY_DSN || '',
@@ -54,20 +59,19 @@ export default class Sentry extends TransportStream {
 
     if (options.extra) {
       options.config.extra = options.config.extra || {};
-      options.config.extra = _.defaults(options.config.extra, options.extra);
+      options.config.extra = defaults(options.config.extra, options.extra);
     }
 
     this.sentryClient = options.sentryClient || require('@sentry/node');
+
     if (!!this.sentryClient) {
       this.sentryClient.init(options.config || {
         dsn: process.env.SENTRY_DSN || '',
       });
 
       this.sentryClient.configureScope((scope: any) => {
-        if (!_.isEmpty(this.tags)) {
-          Object.keys(this.tags).forEach((key) => {
-            scope.setTag(key, this.tags[key]);
-          });
+        if (!isEmpty(this.tags)) {
+          scope.setTags(this.tags);
         }
       });
     }
@@ -76,11 +80,13 @@ export default class Sentry extends TransportStream {
   public log(info: any, callback: any) {
     const { message, fingerprint } = info;
     const level = Object.keys(this.levelsMap).find(key => info.level.toString().includes(key));
+
     if (!level) {
       return callback(null, true);
     }
 
-    const meta = Object.assign({}, _.omit(info, ['level', 'message', 'label']));
+    const meta = { ...omit(info, ['level', 'message', 'label']) };
+
     setImmediate(() => {
       this.emit('logged', level);
     });
@@ -91,28 +97,38 @@ export default class Sentry extends TransportStream {
 
     const context: Context = {};
     context.level = this.levelsMap[level];
-    context.extra = _.omit(meta, ['user']);
-    context.fingerprint = [fingerprint, process.env.NODE_ENV];
-    this.sentryClient.configureScope((scope: sentry.Scope) => {
-      const user = _.get(meta, 'user');
-      if (_.has(context, 'extra')) {
-        Object.keys(context.extra).forEach((key) => {
-          scope.setExtra(key, context.extra[key]);
-        });
+    context.extra = omit(meta, ['user', 'stack']);
+
+    if (fingerprint) {
+      context.fingerprint = [fingerprint, process.env.NODE_ENV];
+    }
+
+    this.sentryClient.withScope((scope: sentry.Scope) => {
+      const user = get(meta, 'user');
+
+      if (has(context, 'extra')) {
+        scope.setExtras(context.extra);
       }
-      if (!_.isEmpty(this.tags)) {
-        Object.keys(this.tags).forEach((key) => {
-          scope.setTag(key, this.tags[key]);
-        });
+
+      if (!isEmpty(this.tags)) {
+        scope.setTags(this.tags);
       }
+
       if (!!user) {
         scope.setUser(user);
       }
+
       if (context.level === 'error' || context.level === 'fatal') {
-        this.sentryClient.captureException(isError(info) ? info : new Error(message));
-        return callback(null, true);
+        let exception = info;
+        if (!isError(exception)) {
+          exception = new Error(message);
+        }
+
+        this.sentryClient.captureException(exception);
+      } else {
+        this.sentryClient.captureMessage(message);
       }
-      this.sentryClient.captureMessage(message);
+
       return callback(null, true);
     });
   }
