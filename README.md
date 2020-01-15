@@ -11,8 +11,14 @@
 
 ## Install
 
+Using yarn:
 ```bash
 yarn add winston @vanchelo/winston-sentry-log
+```
+
+Using npm:
+```bash
+npm install -S winston @vanchelo/winston-sentry-log
 ```
 
 ## Usage
