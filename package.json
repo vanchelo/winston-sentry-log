@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "dev": "NODE_ENV=development tsc-watch --onSuccess \"node dist/index.js\"",
+    "dev": "NODE_ENV=development tsc --watch",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "node dist/index.js"
   },
@@ -27,20 +27,19 @@
     "node": ">= 6.4.0"
   },
   "dependencies": {
-    "@sentry/node": "^5.7.1",
-    "@sentry/utils": "^5.4.0",
+    "@sentry/node": "^5.9.0",
     "lodash": "^4.17.15",
     "winston-transport": "^4.3.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.121",
-    "@types/node": "^11.9.6",
-    "ts-node": "^8.0.2",
-    "tsc-watch": "^2.1.2",
-    "tslint": "^5.17.0",
-    "tslint-config-airbnb": "^5.11.1",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^10.17.6",
+    "ts-node": "^8.5.4",
+    "tsc-watch": "^4.0.0",
+    "tslint": "^5.20.1",
+    "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.3.3333",
+    "typescript": "^3.7.2",
     "winston": "^3.2.1"
   }
 }
