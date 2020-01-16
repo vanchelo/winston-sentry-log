@@ -14,6 +14,13 @@ const errorHandler = (err: any) => {
   console.error(err);
 };
 
+const errorFromInfo = (info: any) => {
+  const error = Object.create(Error.prototype);
+  Object.assign(error, omit(info, ['level']));
+
+  return error;
+};
+
 export default class Sentry extends TransportStream {
   protected name: string;
   protected tags: { [s: string]: any };
@@ -106,6 +113,8 @@ export default class Sentry extends TransportStream {
     this.sentryClient.withScope((scope: sentry.Scope) => {
       const user = get(meta, 'user');
 
+      scope.setLevel(context.level);
+
       if (has(context, 'extra')) {
         scope.setExtras(context.extra);
       }
@@ -121,7 +130,7 @@ export default class Sentry extends TransportStream {
       if (context.level === 'error' || context.level === 'fatal') {
         let exception = info;
         if (!isError(exception)) {
-          exception = new Error(message);
+          exception = errorFromInfo(exception);
         }
 
         this.sentryClient.captureException(exception);
